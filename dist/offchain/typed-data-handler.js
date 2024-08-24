@@ -44,7 +44,15 @@ class TypedDataHandler {
         };
     }
     async signTypedDataRequest(params, types, signer) {
+        //console.log('signer', signer)
+        //console.log('domain', types.domain)
+        //console.log('types', types.types)
+        //console.log('params', params) 
+        //console.log(signer.privateKey)
+        //console.log('metamask:', rawSigMetamask)
         const rawSignature = await signer.signTypedData(types.domain, types.types, params);
+        //console.log('ethers:  ', rawSignature)
+        //console.log('=========================')
         const signature = ethers_1.Signature.from(rawSignature);
         return { ...types, signature: { v: signature.v, r: signature.r, s: signature.s } };
     }
