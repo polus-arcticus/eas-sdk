@@ -1,3 +1,4 @@
+import { signTypedData, SignTypedDataVersion  } from '@metamask/eth-sig-util';
 import {
   AbiCoder,
   Addressable,
@@ -38,16 +39,16 @@ export interface TypedData {
   name: string;
   type:
     | 'bool'
-    | 'uint8'
-    | 'uint16'
-    | 'uint32'
-    | 'uint64'
-    | 'uint128'
-    | 'uint256'
-    | 'address'
-    | 'string'
-    | 'bytes'
-    | 'bytes32';
+  | 'uint8'
+  | 'uint16'
+  | 'uint32'
+  | 'uint64'
+  | 'uint128'
+  | 'uint256'
+  | 'address'
+  | 'string'
+  | 'bytes'
+  | 'bytes32';
 }
 
 export interface EIP712DomainTypedData {
@@ -141,7 +142,43 @@ export abstract class TypedDataHandler {
     types: EIP712TypedData<T, P>,
     signer: TypeDataSigner
   ): Promise<EIP712Response<T, P>> {
-    const rawSignature = await signer.signTypedData(types.domain, types.types, params);
+    //console.log('signer', signer)
+    //console.log('domain', types.domain)
+    //console.log('types', types.types)
+    //console.log('params', params) 
+    //console.log(signer.privateKey)
+    const metaTypes = {
+      'Attest': [
+        { name: 'schema', type: 'bytes32'  },
+        { name: 'recipient', type: 'address'  },
+        { name: 'expirationTime', type: 'uint64'  },
+        { name: 'revocable', type: 'bool'  },
+        { name: 'refUID', type: 'bytes32'  },
+        { name: 'data', type: 'bytes'  },
+        { name: 'nonce', type: 'uint256'  } 
+      ],
+      EIP712Domain: [
+        { name: 'name', type: 'string' },
+        { name: 'version', type: 'string' },
+        { name: 'chainId', type: 'uint256' },
+        { name: 'verifyingContract', type: 'address' }
+      ]
+    }
+    const rawSignature = signTypedData({
+      privateKey: Buffer.from(signer.privateKey.slice(2), 'hex'),
+      data: {
+        types: metaTypes,
+        domain: types.domain,
+        primaryType: 'Attest',
+        message: params
+      },
+      version: SignTypedDataVersion.V4
+    })
+    //console.log('metamask:', rawSigMetamask)
+
+    //const rawSignature = await signer.signTypedData(types.domain, types.types, params);
+    //console.log('ethers:  ', rawSignature)
+    //console.log('=========================')
     const signature = Sig.from(rawSignature);
 
     return { ...types, signature: { v: signature.v, r: signature.r, s: signature.s } };
