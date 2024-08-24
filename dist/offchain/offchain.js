@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Offchain = exports.SALT_SIZE = exports.OFFCHAIN_ATTESTATION_TYPES = exports.OffchainAttestationVersion = void 0;
+const eth_sig_util_1 = require("@metamask/eth-sig-util");
 const ethers_1 = require("ethers");
 const utils_1 = require("../utils");
 const typed_data_handler_1 = require("./typed-data-handler");
@@ -138,14 +139,59 @@ class Offchain extends typed_data_handler_1.TypedDataHandler {
         if (this.version >= OffchainAttestationVersion.Version2 && !typedData.salt) {
             typedData.salt = (0, ethers_1.hexlify)((0, ethers_1.randomBytes)(exports.SALT_SIZE));
         }
-        const signedRequest = await this.signTypedDataRequest(typedData, {
+        //console.log('params', params);
+        console.log("domain", this.getDomainTypedData());
+        const metaTypes = {
+            ...this.signingType.types,
+            EIP712Domain: [
+                { name: 'name', type: 'string' },
+                { name: 'version', type: 'string' },
+                { name: 'chainId', type: 'uint256' },
+                { name: 'verifyingContract', type: 'address' }
+            ]
+        };
+        console.log('metaTypes', metaTypes);
+        const rawSignature = (0, eth_sig_util_1.signTypedData)({
+            //@ts-expect-error
+            privateKey: Buffer.from(signer.privateKey.slice(2), 'hex'),
+            data: {
+                types: metaTypes,
+                //@ts-expect-error
+                domain: this.getDomainTypedData(),
+                //@ts-expect-error
+                primaryType: this.signingType.primaryType,
+                message: typedData
+            },
+            version: eth_sig_util_1.SignTypedDataVersion.V4
+        });
+        console.log(this.signingType.types);
+        const sig = ethers_1.Signature.from(rawSignature);
+        const signedRequest = {
             domain: this.getDomainTypedData(),
             primaryType: this.signingType.primaryType,
             message: typedData,
-            types: this.signingType.types
-        }, signer);
+            types: this.signingType.types,
+            signature: {
+                v: sig.v,
+                r: sig.r,
+                s: sig.s
+            }
+        };
+        /*
+          const signedRequest = await this.signTypedDataRequest<EIP712MessageTypes, OffchainAttestationTypedData>(
+            typedData,
+            {
+              domain: this.getDomainTypedData(),
+              primaryType: this.signingType.primaryType,
+              message: typedData,
+              types: this.signingType.types
+            },
+            signer
+          );
+          */
         const { verifyOnchain } = { ...DEFAULT_OFFCHAIN_ATTESTATION_OPTIONS, ...options };
         if (verifyOnchain) {
+            console.log('hmm');
             try {
                 const { schema, recipient, expirationTime, revocable, data } = params;
                 // Verify the offchain attestation onchain by simulating a contract call to attest. Since onchain verification
