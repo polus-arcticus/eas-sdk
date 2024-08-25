@@ -140,7 +140,7 @@ class Offchain extends typed_data_handler_1.TypedDataHandler {
             typedData.salt = (0, ethers_1.hexlify)((0, ethers_1.randomBytes)(exports.SALT_SIZE));
         }
         //console.log('params', params);
-        console.log("domain", this.getDomainTypedData());
+        //console.log("domain", this.getDomainTypedData());
         const metaTypes = {
             ...this.signingType.types,
             EIP712Domain: [
@@ -150,7 +150,7 @@ class Offchain extends typed_data_handler_1.TypedDataHandler {
                 { name: 'verifyingContract', type: 'address' }
             ]
         };
-        console.log('metaTypes', metaTypes);
+        //console.log('metaTypes', metaTypes);
         const rawSignature = (0, eth_sig_util_1.signTypedData)({
             //@ts-expect-error
             privateKey: Buffer.from(signer.privateKey.slice(2), 'hex'),
@@ -164,7 +164,7 @@ class Offchain extends typed_data_handler_1.TypedDataHandler {
             },
             version: eth_sig_util_1.SignTypedDataVersion.V4
         });
-        console.log(this.signingType.types);
+        //console.log(this.signingType.types)
         const sig = ethers_1.Signature.from(rawSignature);
         const signedRequest = {
             domain: this.getDomainTypedData(),
