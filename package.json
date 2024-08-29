@@ -1,6 +1,6 @@
 {
   "name": "@coophive/eas-sdk",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Ethereum Attestation Service - TypeScript/JavaScript SDK",
   "repository": {
     "type": "git",
