@@ -1,8 +1,11 @@
 {
-  "name": "@ethereum-attestation-service/eas-sdk",
+  "name": "@coophive/eas-sdk",
   "version": "2.5.0",
   "description": "Ethereum Attestation Service - TypeScript/JavaScript SDK",
-  "repository": "git@github.com:ethereum-attestation-service/eas-sdk.git",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ethereum-attestation-service/eas-sdk.git"
+  },
   "author": "Leonid Beder <leonid@lbeder.com>",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -26,11 +29,11 @@
     "multiformats": "9.9.0",
     "pako": "^2.1.0",
     "semver": "^7.6.3",
-    "viem": "^2.19.2"
+    "viem": "^2.19.2",
+    "@metamask/eth-sig-util": "^7.0.3"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
-    "@metamask/eth-sig-util": "^7.0.3",
     "@types/lodash": "^4.17.7",
     "@types/node": "^22.1.0",
     "@types/pako": "^2.0.3",
@@ -47,5 +50,12 @@
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.0.1"
   },
-  "packageManager": "pnpm@9.8.0+sha512.8e4c3550fb500e808dbc30bb0ce4dd1eb614e30b1c55245f211591ec2cdf9c611cabd34e1364b42f564bd54b3945ed0f49d61d1bbf2ec9bd74b866fcdc723276"
+  "packageManager": "pnpm@9.8.0+sha512.8e4c3550fb500e808dbc30bb0ce4dd1eb614e30b1c55245f211591ec2cdf9c611cabd34e1364b42f564bd54b3945ed0f49d61d1bbf2ec9bd74b866fcdc723276",
+  "directories": {
+    "test": "test"
+  },
+  "bugs": {
+    "url": "https://github.com/ethereum-attestation-service/eas-sdk/issues"
+  },
+  "homepage": "https://github.com/ethereum-attestation-service/eas-sdk#readme"
 }
